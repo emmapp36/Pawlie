@@ -1,4 +1,13 @@
-import { Body, Controller, Param, ParseUUIDPipe, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Res,
+} from '@nestjs/common';
 import type { Response } from 'express';
 import { PetsService } from '../pets/pets.service';
 import { ChatService } from './chat.service';
@@ -12,6 +21,7 @@ export class ChatController {
   ) {}
 
   @Post()
+  @HttpCode(HttpStatus.OK)
   async chat(
     @Param('petId', ParseUUIDPipe) petId: string,
     @Body() dto: ChatRequestDto,
