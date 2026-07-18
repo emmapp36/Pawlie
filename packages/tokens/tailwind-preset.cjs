@@ -26,6 +26,7 @@ module.exports = {
       borderRadius: {
         card: '28px',
         panel: '22px',
+        chat: '22px',
         pill: '999px',
       },
       boxShadow: {
