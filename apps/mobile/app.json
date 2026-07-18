@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Pawlie",
+    "slug": "pawlie",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "pawlie",
+    "splash": {
+      "backgroundColor": "#F0F3EC"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.pawlie.mobile"
+    },
+    "android": {
+      "package": "app.pawlie.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#B5DCA0"
+      }
+    }
+  }
+}
