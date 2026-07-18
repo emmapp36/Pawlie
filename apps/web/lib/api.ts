@@ -1,4 +1,4 @@
-import type { ChatStreamEvent, Pet } from '@pawlie/domain';
+import type { ChatStreamEvent, Pet, WeightEntry } from '@pawlie/domain';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/v1';
 
@@ -30,6 +30,11 @@ export const api = {
     list: (householdId: string) =>
       request<Pet[]>(`/pets?householdId=${encodeURIComponent(householdId)}`),
     get: (id: string) => request<Pet>(`/pets/${id}`),
+  },
+
+  weights: {
+    list: (petId: string, limit = 30) =>
+      request<WeightEntry[]>(`/pets/${petId}/weights?limit=${limit}`),
   },
 
   async *chat(
