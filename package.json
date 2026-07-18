@@ -13,6 +13,7 @@
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "db:up": "docker compose up -d postgres",
+    "db:seed": "docker exec -i pawlie-postgres psql -U pawlie -d pawlie < db/seed.sql",
     "db:down": "docker compose down"
   },
   "engines": {
