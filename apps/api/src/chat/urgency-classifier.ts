@@ -6,10 +6,15 @@ interface Classification {
   emergency: boolean;
 }
 
-const EMERGENCY_PATTERNS: RegExp[] = [
-  /\bate (a |some |the )?(chocolate|grape|raisin|xylitol|onion|battery|medication|pills?)\b/i,
-  /\b(drank|swallowed|ingested)\b/i,
-  /\b(seizure|collapsed?|unconscious|not breathing|bleeding heavily|bloat(ed)?)\b/i,
+const INGESTION_VERBS = /\b(ate|eaten|swallowed|drank|licked up|got into|ingested|chewed up)\b/i;
+
+const DANGEROUS_SUBSTANCES =
+  /\b(chocolate|grapes?|raisins?|xylitol|onions?|garlic|batter(y|ies)|medication|pills?|tablets?|antifreeze|rat poison|mouse poison|mushrooms?|marijuana)\b/i;
+
+const HARD_EMERGENCY_SIGNS: RegExp[] = [
+  /\b(seizure|seizing|collapsed?|unconscious|not breathing|bleeding heavily)\b/i,
+  /\bbloat(ed)?\b/i,
+  /\bdistended (stomach|belly|abdomen)\b/i,
   /\bhit by (a )?car\b/i,
   /\bpoison(ed|ing)?\b/i,
 ];
@@ -32,7 +37,11 @@ const INTENT_PATTERNS: Array<[ChatIntent, RegExp]> = [
 @Injectable()
 export class UrgencyClassifier {
   classify(message: string): Classification {
-    if (EMERGENCY_PATTERNS.some((pattern) => pattern.test(message))) {
+    const ingestedSomethingDangerous =
+      INGESTION_VERBS.test(message) && DANGEROUS_SUBSTANCES.test(message);
+    const hasHardEmergencySign = HARD_EMERGENCY_SIGNS.some((pattern) => pattern.test(message));
+
+    if (ingestedSomethingDangerous || hasHardEmergencySign) {
       return { intent: 'emergency', emergency: true };
     }
 
