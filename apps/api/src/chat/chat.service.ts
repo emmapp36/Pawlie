@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import type { ChatStreamEvent, Pet } from '@pawlie/domain';
 import { randomUUID } from 'node:crypto';
 import { CHAT_MODEL, type ChatModel } from './chat-model';
@@ -8,6 +8,8 @@ const POISON_HOTLINE = 'ASPCA Animal Poison Control: +1 (888) 426-4435';
 
 @Injectable()
 export class ChatService {
+  private readonly logger = new Logger(ChatService.name);
+
   constructor(
     private readonly classifier: UrgencyClassifier,
     @Inject(CHAT_MODEL) private readonly model: ChatModel,
@@ -31,8 +33,20 @@ export class ChatService {
       return;
     }
 
-    for await (const text of this.model.stream({ pet, intent, message })) {
-      yield { kind: 'token', text };
+    try {
+      for await (const text of this.model.stream({ pet, intent, message })) {
+        yield { kind: 'token', text };
+      }
+    } catch (error) {
+      this.logger.error('Generation backend failed mid-stream', error instanceof Error ? error.stack : String(error));
+      yield {
+        kind: 'token',
+        text:
+          `Sorry — I'm having trouble thinking right now. Please try again in a ` +
+          `moment. If this is urgent, don't wait for me: contact your vet.`,
+      };
+      yield { kind: 'done' };
+      return;
     }
 
     if (intent === 'symptom') {
