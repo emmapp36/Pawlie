@@ -1,7 +1,11 @@
+import { ChatLauncher } from '@/components/chat/chat-launcher';
 import { Card } from '@/components/ui/card';
 import { Halo } from '@/components/ui/halo';
-import { PillButton } from '@/components/ui/pill-button';
+import { NoticeCard } from '@/components/ui/notice-card';
 import { StatCell } from '@/components/ui/stat-cell';
+import { api } from '@/lib/api';
+import { ageLabel, bcsLabel, weightLabel } from '@/lib/format';
+import type { Pet, WeightEntry } from '@pawlie/domain';
 
 const PawIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -21,7 +25,41 @@ const reminders = [
   { title: 'DHPP booster', due: 'In 12 days' },
 ];
 
-export default function DashboardPage() {
+async function loadDashboard(petId: string): Promise<{ pet: Pet; weights: WeightEntry[] }> {
+  const [pet, weights] = await Promise.all([api.pets.get(petId), api.weights.list(petId, 1)]);
+  return { pet, weights };
+}
+
+export default async function DashboardPage() {
+  const petId = process.env.DEMO_PET_ID;
+
+  if (!petId) {
+    return (
+      <main className="flex min-h-dvh items-center justify-center px-6">
+        <NoticeCard
+          title="No demo pet configured"
+          description="Set DEMO_PET_ID in apps/web/.env.local, then run npm run db:seed."
+        />
+      </main>
+    );
+  }
+
+  let pet: Pet;
+  let weights: WeightEntry[];
+  try {
+    ({ pet, weights } = await loadDashboard(petId));
+  } catch {
+    return (
+      <main className="flex min-h-dvh items-center justify-center px-6">
+        <NoticeCard
+          title="Pawlie's API isn't reachable"
+          description="Make sure the backend is running on http://localhost:4000."
+        />
+      </main>
+    );
+  }
+
+  const latestWeight = weights[0];
   const doneCount = checklist.filter((item) => item.done).length;
 
   return (
@@ -37,7 +75,7 @@ export default function DashboardPage() {
             Good morning
           </p>
           <h1 className="font-display text-3xl font-bold tracking-tight">
-            Biscuit&rsquo;s day
+            {pet.name}&rsquo;s day
           </h1>
         </div>
       </header>
@@ -70,9 +108,17 @@ export default function DashboardPage() {
         <Card>
           <h2 className="mb-4 font-display text-lg font-bold">Vitals</h2>
           <div className="grid grid-cols-3 gap-4">
-            <StatCell icon={<PawIcon size={16} />} label="Age" value="2 yrs" />
-            <StatCell icon={<PawIcon size={16} />} label="Weight" value="24.3 kg" />
-            <StatCell icon={<PawIcon size={16} />} label="BCS" value="5 / 9" />
+            <StatCell icon={<PawIcon size={16} />} label="Age" value={ageLabel(pet.birthDate)} />
+            <StatCell
+              icon={<PawIcon size={16} />}
+              label="Weight"
+              value={weightLabel(latestWeight?.weightKg)}
+            />
+            <StatCell
+              icon={<PawIcon size={16} />}
+              label="BCS"
+              value={bcsLabel(latestWeight?.bodyConditionScore)}
+            />
           </div>
         </Card>
 
@@ -91,7 +137,7 @@ export default function DashboardPage() {
         </Card>
 
         <div className="sm:col-span-2">
-          <PillButton fullWidth>Ask Pawlie about Biscuit</PillButton>
+          <ChatLauncher petId={pet.id} petName={pet.name} />
         </div>
       </div>
 
