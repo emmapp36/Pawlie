@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ground: #f0f3ec;
+  --surface: #ffffff;
+  --ink: #20261e;
+  --ink-soft: #6e7a6b;
+  --line: #e4eadd;
+  --mint: #b5dca0;
+  --mint-tint: #eaf3e2;
+  --mint-deep: #47763a;
+  --on-mint: #16240f;
+  --sky-soft: #e3ecf9;
+  --sky-deep: #44699f;
+  --safe: #2f855a;
+  --safe-soft: #e9f6ee;
+  --danger: #c05046;
+  --danger-soft: #faebe9;
+  --shadow-soft: 0 2px 6px rgba(31, 42, 26, 0.05), 0 12px 32px rgba(31, 42, 26, 0.09);
+  --shadow-lift: 0 4px 10px rgba(31, 42, 26, 0.06), 0 18px 44px rgba(31, 42, 26, 0.12);
+  --halo-radius: 46% 54% 52% 48% / 52% 46% 54% 48%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #151a13;
+    --surface: #1e2419;
+    --ink: #e9efe3;
+    --ink-soft: #9daa95;
+    --line: #2c3527;
+    --mint: #7fa968;
+    --mint-tint: #26301f;
+    --mint-deep: #a9d48e;
+    --on-mint: #101708;
+    --sky-soft: #1d2735;
+    --sky-deep: #8fb0e3;
+    --safe: #63c892;
+    --safe-soft: #14261b;
+    --danger: #e58b82;
+    --danger-soft: #33201d;
+    --shadow-soft: 0 2px 6px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.3);
+    --shadow-lift: 0 4px 10px rgba(0, 0, 0, 0.4), 0 18px 44px rgba(0, 0, 0, 0.38);
+  }
+}
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: 'Nunito Sans', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
